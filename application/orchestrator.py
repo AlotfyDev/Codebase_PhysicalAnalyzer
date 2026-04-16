@@ -18,7 +18,12 @@ from domain.graph_builder import GraphBuilderStage
 
 # Safe import for config adapter (provides fallback during early refactoring)
 try:
-    from adapters.config.json_ignored import load_config, load_ignore_patterns
+    from adapters.config.json_ignored import JsonConfigLoader
+    _cfg_loader = JsonConfigLoader()
+    def load_ignore_patterns(root: Path) -> List[str]:
+        return _cfg_loader.load_ignore_patterns(root)
+    def load_config(root: Path) -> Dict[str, Any]:
+        return _cfg_loader.load_config(root)
 except ImportError:
     def load_ignore_patterns(root: Path) -> List[str]: return []
     def load_config(root: Path) -> Dict[str, Any]:

@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 from application.api import run_analysis_safe
+from application.safe_merger import safe_merge
 
 logger = logging.getLogger(__name__)
 
@@ -45,18 +46,22 @@ def inject_physical_analysis(
             len(physical_data.get("aggregated_metrics", {}).get("circular_dependencies", []))
         )
 
-    # Merge into Graphify extraction_dict
+    # Merge into Graphify extraction_dict using safe_merge
     merged = existing_extractions or {"nodes": [], "edges": [], "metadata": {}}
     physical_data = result["data"]
 
-    merged["nodes"].extend(physical_data.get("nodes", []))
-    merged["edges"].extend(physical_data.get("edges", []))
+    # Use safe_merge to prevent duplicate nodes/edges and enrich existing nodes
+    merge_result = safe_merge(physical_data, merged)
+    merged = merge_result.merged_dict
+
+    # Add physical analysis metadata
     merged["metadata"]["physical_analysis"] = physical_data.get("metadata", {})
     merged["metadata"]["physical_report"] = {
         "success": result["success"],
         "errors": result["errors"],
         "warnings": result["warnings"],
-        "generated_at": physical_data.get("metadata", {}).get("timestamp", "")
+        "generated_at": physical_data.get("metadata", {}).get("timestamp", ""),
+        "merge_stats": merge_result.stats
     }
 
     # Dispatcher placeholder: will wire to reporting/ & relational_bridge/ in next iteration
