@@ -11,7 +11,7 @@ class ImpactExtractor(IInsightExtractor):
     def default_thresholds(self) -> Dict[str, Any]:
         return {"impact_hotspot": 0.15, "god_file_impact": 20, "orphan_files_allowed": 5}
 
-    def collect_raw_findings(self, raw_data: Dict[str, Any]) -> Dict[str, Any]:
+    def get_raw_findings(self, raw_data: Dict[str, Any]) -> Dict[str, Any]:
         edges = raw_data.get("edges", [])
         inbound: Dict[str, int] = {}
         for e in edges:

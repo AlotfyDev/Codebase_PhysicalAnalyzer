@@ -11,7 +11,7 @@ class StructureExtractor(IInsightExtractor):
     def default_thresholds(self) -> Dict[str, Any]:
         return {"max_depth": 5, "folder_weight_god": 0.85, "entropy_warn": 0.6, "flat_folder_files": 10}
 
-    def collect_raw_findings(self, raw_data: Dict[str, Any]) -> Dict[str, Any]:
+    def get_raw_findings(self, raw_data: Dict[str, Any]) -> Dict[str, Any]:
         folders = [n for n in raw_data.get("nodes", []) if n.get("node_type") == "physical_folder"]
         return {
             "folder_tree_depths": {f["id"]: f["physical_meta"].get("depth", 0) for f in folders},
