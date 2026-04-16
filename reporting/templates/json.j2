@@ -1,0 +1,28 @@
+{
+  "report_version": "1.0.0",
+  "metadata": {
+    "generated_at": "ISO8601",
+    "project_root": "/path/to/project",
+    "analyzer_version": "physical_v1",
+    "health_score": 0.0
+  },
+  "insights": [
+    {
+      "insight_id": "INS-CYCLE-001",
+      "category": "dependency_coupling",
+      "severity": "critical",
+      "title": "Circular Dependency Detected",
+      "description": "Files auth.py and helpers.py form a cyclic import chain.",
+      "evidence": ["fs:file:src:core:auth.py", "fs:file:src:utils:helpers.py"],
+      "traceability_matrix": [
+        ["circular_dependencies", 1, 0, "FAIL", "graph.aggregated_metrics.circular_dependencies"],
+        ["impact_ratio", 0.22, 0.15, "WARN", "nodes[12].physical_meta.impact_ratio"]
+      ],
+      "recommendation": "Extract shared interface or apply Dependency Inversion Principle."
+    }
+  ],
+  "recommendations": [
+    {"priority": 1, "action": "Resolve circular dependencies before next release"},
+    {"priority": 2, "action": "Refactor God Folder 'src/core' (weight: 0.92)"}
+  ]
+}

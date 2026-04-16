@@ -1,18 +1,16 @@
 # adapters/import_/base.py
-"""Adapter base for importers. Strictly implements ports.import_.IImportStrategy."""
+"""Adapter base for importers. Implements ports.import_.IImportStrategy."""
 from __future__ import annotations
 from pathlib import Path
-from typing import Dict, Any, Optional
-
+from typing import Dict, Any
 from ports.import_ import IImportStrategy, LoadReport
 
 class BaseImporter(IImportStrategy):
     @property
-    def format_name(self) -> str:
-        raise NotImplementedError("Concrete importers must define format_name")
+    def format_name(self) -> str: raise NotImplementedError
 
     def load(self, source: Path) -> LoadReport:
-        report = LoadReport(success=True, dataframes={}, warnings=[])
+        report = LoadReport(success=True, format_name=self.format_name, warnings=[])
         try:
             report.dataframes = self._read(source)
             # Detect version from first valid table
@@ -25,14 +23,6 @@ class BaseImporter(IImportStrategy):
             report.success = False
             report.warnings.append(str(e))
         return report
-
-    @staticmethod
-    def detect_schema_version(df: Any) -> Optional[str]:
-        """Matches Protocol static method signature."""
-        if not hasattr(df, "columns"): return None
-        if "schema_version" in df.columns and not df.empty:
-            return str(df["schema_version"].iloc[0])
-        return None
 
     def _read(self, source: Path) -> Dict[str, Any]:
         raise NotImplementedError("Concrete importers must implement _read()")

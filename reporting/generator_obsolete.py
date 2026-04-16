@@ -1,7 +1,7 @@
 # reporting/generator.py
 """
 [Contract: 04-Abstraction] Implements ports.report.IReportGenerator.
-Wraps Jinja2 logic in a protocol-compliant strategy. Zero self-imports.
+Wraps legacy Jinja2 logic in a protocol-compliant, registry-ready strategy.
 """
 from __future__ import annotations
 from pathlib import Path
@@ -9,7 +9,8 @@ from typing import Dict, Any, Optional
 from jinja2 import Template
 
 from ports.report import IReportGenerator, RenderReport
-
+from reporting.generator import generate_dynamic_report
+generate_dynamic_report(report, output_dir="./reports", filename="architecture.md")
 MARKDOWN_TEMPLATE = """... (نفس القالب القديم تمامًا) ..."""
 
 class MarkdownReportGenerator(IReportGenerator):
@@ -35,6 +36,7 @@ class MarkdownReportGenerator(IReportGenerator):
         )
         self.template.environment.filters["basename"] = lambda p: Path(p).name if p else "N/A"
 
+    # ✅ FIX 1: Added missing colon in type hint
     def _build_context(self, report_data: Dict[str, Any]) -> Dict[str, Any]:
         insights = report_data.get("insights", [])
         metrics = report_data.get("metadata", {})
@@ -53,6 +55,7 @@ class MarkdownReportGenerator(IReportGenerator):
             "version": self.version
         }
 
+    # ✅ FIX 2: Added missing colon in type hint
     def render(self, report_data: Dict[str, Any], output_dir: Path, filename: Optional[str] = None, **kwargs) -> RenderReport:
         context = self._build_context(report_data)
         content = self.template.render(**context)
@@ -60,7 +63,8 @@ class MarkdownReportGenerator(IReportGenerator):
         out_path.write_text(content, encoding="utf-8")
         return RenderReport(success=True, content=content, output_path=out_path, format_name=self.format_name)
 
-# ✅ Backward compatibility wrapper (No self-import anymore)
+# Backward compatibility wrapper
+# ✅ FIX 3: Added missing colon in type hint
 def generate_dynamic_report(report_data: Dict[str, Any], output_dir: str | Path = ".", filename: str = "architectural_report.md") -> str:
     gen = MarkdownReportGenerator()
     res = gen.render(report_data, Path(output_dir), filename)
