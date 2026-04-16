@@ -1,0 +1,63 @@
+classDiagram
+    direction TB
+    
+    class IPhysicalStage {
+        <<interface>>
+        +str stage_id
+        +execute(context) StageResult
+    }
+    
+    class IPipeline {
+        <<interface>>
+        +run(root_path, **kwargs) Any
+    }
+    
+    class IExportStrategy {
+        <<interface>>
+        +str format
+        +export(data, path) None
+        +validate(data) bool
+    }
+    
+    class IImportStrategy {
+        <<interface>>
+        +str format
+        +load(path) Dict
+    }
+    
+    class IReportGenerator {
+        <<interface>>
+        +generate(data, output_path) None
+    }
+    
+    class IConfigLoader {
+        <<interface>>
+        +load(path) Dict
+    }
+    
+    class IInsightExtractor {
+        <<interface>>
+        +str extractor_id
+        +default_thresholds() Dict
+        +get_raw_findings(raw_) Dict
+        +extract(raw_data, thresholds) List[InsightRecord]
+    }
+    
+    class IReportAggregator {
+        <<interface>>
+        +register_extractor(extractor) None
+        +execute(raw_data, config) Dict
+        +calculate_health(insights, total_nodes, penalties) float
+    }
+    
+    IPhysicalStage <|.. ScannerStage
+    IPhysicalStage <|.. MetricsStage
+    IPhysicalStage <|.. ClassifierStage
+    IPhysicalStage <|.. ImportExtractorStage
+    IPhysicalStage <|.. GraphBuilderStage
+    
+    IInsightExtractor <|.. StructureExtractor
+    IInsightExtractor <|.. DependencyExtractor
+    IInsightExtractor <|.. ImpactExtractor
+    
+    IReportAggregator <|.. InsightAggregator

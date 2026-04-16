@@ -1,0 +1,35 @@
+flowchart LR
+    subgraph "Input"
+        ROOT[AnalysisContext]
+    end
+
+    subgraph "Stage 1: Scanner"
+        S1[F-01: Filesystem<br/>Traversal]
+    end
+
+    subgraph "Stage 2: Metrics"
+        S2[F-02: Depth Mapping<br/>F-03: Weight Calc<br/>F-04: Entropy]
+    end
+
+    subgraph "Stage 3: Classifier"
+        S3[P-01: File Identity<br/>P-02: Layer Classification]
+    end
+
+    subgraph "Stage 4: Import Extractor"
+        S4[P-03: Import Extraction<br/>& Resolution]
+    end
+
+    subgraph "Stage 5: Graph Builder"
+        S5[F-05: Node/Edge Build<br/>P-04: Impact Analysis<br/>P-05: Cycle Detection]
+    end
+
+    subgraph "Output"
+        EXTRACT[extraction_dict<br/>Graphify-compatible]
+    end
+
+    ROOT --> S1
+    S1 --> S2
+    S2 --> S3
+    S3 --> S4
+    S4 --> S5
+    S5 --> EXTRACT

@@ -1,0 +1,66 @@
+flowchart TB
+    subgraph "User Interface"
+        CLI[CLI: python -m]
+        API[Python API]
+        GRAPHIFY[Graphify Integration]
+    end
+
+    subgraph "Application Layer"
+        ORCH[Orchestrator]
+        API_MOD[api.py]
+        RUNNER[runner.py]
+    end
+
+    subgraph "Domain Layer"
+        SCANNER[scanner.py]
+        METRICS[metrics.py]
+        CLASSIFIER[classifier.py]
+        IMPORTS[import_extractor.py]
+        GRAPH[graph_builder.py]
+    end
+
+    subgraph "Ports Layer"
+        STAGE[stage.py]
+        CONFIG[config.py]
+        EXPORT[export.py]
+        IMPORT[import_.py]
+        REPORT[report.py]
+        INSIGHT[insight.py]
+    end
+
+    subgraph "Adapters Layer"
+        AD_EXP[export/]
+        AD_IMP[import_/]
+        AD_CFG[config/]
+        AD_GRP[graphify/]
+    end
+
+    subgraph "Infrastructure"
+        VALID[validator.py]
+        SCHEMA[schemas/]
+    end
+
+    subgraph "Reporting"
+        GEN[generator.py]
+        EXT[extractors/]
+        AGG[aggregators/]
+    end
+
+    CLI --> ORCH
+    API --> API_MOD
+    GRAPHIFY --> ORCH
+    
+    ORCH --> STAGE
+    STAGE --> SCANNER
+    STAGE --> METRICS
+    STAGE --> CLASSIFIER
+    STAGE --> IMPORTS
+    STAGE --> GRAPH
+    
+    SCANNER --> AD_CFG
+    GRAPH --> VALID
+    GRAPH --> SCHEMA
+    
+    ORCH --> AGG
+    AGG --> EXT
+    AGG --> GEN

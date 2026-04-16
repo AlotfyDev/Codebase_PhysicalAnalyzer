@@ -1,0 +1,39 @@
+flowchart TB
+    subgraph "Input"
+        GRAPH[Graph Data<br/>extraction_dict]
+    end
+
+    subgraph "Extractors"
+        STR[StructureExtractor]
+        DEP[DependencyExtractor]
+        IMP[ImpactExtractor]
+    end
+
+    subgraph "Aggregator"
+        REG[Register Extractors]
+        EXEC[Execute All]
+        MERGE[Merge Insights]
+        HEALTH[Calculate Health]
+    end
+
+    subgraph "Output"
+        JSON[JSON Report]
+        MD[Markdown Report]
+        HTML[HTML Report]
+    end
+
+    GRAPH --> STR
+    GRAPH --> DEP
+    GRAPH --> IMP
+    
+    STR --> REG
+    DEP --> REG
+    IMP --> REG
+    
+    REG --> EXEC
+    EXEC --> MERGE
+    MERGE --> HEALTH
+    
+    HEALTH --> JSON
+    HEALTH --> MD
+    HEALTH --> HTML
